@@ -1,0 +1,33 @@
+{
+  "name": "BodyLog",
+  "short_name": "BodyLog",
+  "description": "Mobile-first lean bulk tracker. Editorial liquid glass.",
+  "start_url": "/bodylog/",
+  "scope": "/bodylog/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08080a",
+  "theme_color": "#0a0a0b",
+  "lang": "it",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "/bodylog/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/bodylog/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/bodylog/icon-512-maskable.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ]
+}

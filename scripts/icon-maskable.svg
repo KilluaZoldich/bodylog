@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1612"/>
+      <stop offset="55%" stop-color="#0e0b08"/>
+      <stop offset="100%" stop-color="#080604"/>
+    </linearGradient>
+    <radialGradient id="spot" cx="0.78" cy="0.18" r="0.78">
+      <stop offset="0%" stop-color="#C9A961" stop-opacity="0.34"/>
+      <stop offset="55%" stop-color="#C9A961" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#C9A961" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="plum" cx="0.15" cy="0.85" r="0.7">
+      <stop offset="0%" stop-color="#6b4a8a" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#6b4a8a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5DC9F"/>
+      <stop offset="35%" stop-color="#D4B570"/>
+      <stop offset="72%" stop-color="#A88B47"/>
+      <stop offset="100%" stop-color="#7A6233"/>
+    </linearGradient>
+    <linearGradient id="goldHi" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFF4D6" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#FFF4D6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Full-bleed background — required for maskable (no transparent edges) -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <rect width="1024" height="1024" fill="url(#plum)"/>
+  <rect width="1024" height="1024" fill="url(#spot)"/>
+
+  <!-- Letter centered, scaled to fit inside the maskable safe zone
+       (Android crops up to 20% on each side; centered 60% radius is fully safe) -->
+  <g transform="translate(512 512) scale(0.62) translate(-512 -512)">
+    <text
+      x="512" y="710"
+      font-family="Times New Roman, Times, serif"
+      font-size="660"
+      font-weight="700"
+      fill="url(#gold)"
+      text-anchor="middle"
+    >B</text>
+    <text
+      x="512" y="710"
+      font-family="Times New Roman, Times, serif"
+      font-size="660"
+      font-weight="700"
+      fill="url(#goldHi)"
+      text-anchor="middle"
+      opacity="0.5"
+    >B</text>
+    <circle cx="800" cy="690" r="36" fill="url(#gold)"/>
+  </g>
+</svg>
