@@ -1,8 +1,12 @@
 import { useRef, useState } from 'react'
-import { Camera, Trash2 } from 'lucide-react'
+import { Camera, Trash2, Ruler, Images } from 'lucide-react'
 import { todayKey, formatItDate } from '../lib/dates.js'
 import { Card, SectionTitle, NumberInput, PrimaryButton, GhostButton } from '../components/ui.jsx'
 import { useToast } from '../components/Toast.jsx'
+import Masthead from '../components/Masthead.jsx'
+import SignatureMark from '../components/SignatureMark.jsx'
+import EmptyState from '../components/EmptyState.jsx'
+import { success as hapticSuccess } from '../lib/haptics.js'
 
 const FIELDS = [
   { key: 'weight_kg', label: 'Peso', suffix: 'kg', step: 0.1 },
@@ -37,6 +41,7 @@ export default function Misure({ state, setState }) {
       measurements: [...prev.measurements, { id: Date.now(), ...form }].sort((a, b) => b.date.localeCompare(a.date)),
     }))
     setForm({ date: todayKey(), weight_kg: null, chest_cm: null, biceps_cm: null, waist_cm: null, thigh_cm: null })
+    hapticSuccess()
     show('Misure salvate', { kind: 'success' })
   }
 
@@ -72,11 +77,7 @@ export default function Misure({ state, setState }) {
 
   return (
     <div className="px-5 pt-5 pb-nav max-w-md mx-auto">
-      <header className="mb-6">
-        <div className="label-editorial mb-1">Tracking</div>
-        <h1 className="text-2xl font-display font-light text-cream">Misure</h1>
-        <p className="text-[13px] text-muted mt-1 tracking-wide">Aggiorna ~1x al mese</p>
-      </header>
+      <Masthead section="Misure" phase="Tracking" state={state} />
 
       <Card>
         <label className="label-editorial block mb-2">Data</label>
@@ -84,7 +85,7 @@ export default function Misure({ state, setState }) {
           type="date"
           value={form.date}
           onChange={(e) => setForm({ ...form, date: e.target.value })}
-          className="w-full min-h-[48px] rounded-glass-sm glass-inset px-4 text-base text-cream"
+          className="w-full min-h-[48px] rounded-glass-sm glass-clear px-4 text-base text-cream"
         />
         <div className="mt-4 space-y-3">
           {FIELDS.map((f) => (
@@ -120,37 +121,43 @@ export default function Misure({ state, setState }) {
             <Camera size={16} strokeWidth={1.8} /> Aggiungi foto progresso
           </span>
         </GhostButton>
-        {state.photos.length > 0 && (
+        {state.photos.length > 0 ? (
           <div className="mt-4 grid grid-cols-3 gap-2">
             {state.photos.map((p) => (
               <div key={p.id} className="relative group">
                 <div className="aspect-square overflow-hidden rounded-glass-sm border border-white/10">
                   <img src={p.dataUrl} alt={`Progresso ${p.dateKey}`} className="w-full h-full object-cover" />
                 </div>
-                <div className="absolute bottom-1.5 left-1.5 right-1.5 text-[10px] text-cream glass-strong rounded-full px-2 py-0.5 text-center tracking-wider">
+                <div className="absolute bottom-1.5 left-1.5 right-1.5 text-[10px] text-cream glass-prominent rounded-full px-2 py-0.5 text-center tracking-wider">
                   {formatItDate(p.dateKey)}
                 </div>
                 <button
                   type="button"
                   onClick={() => removePhoto(p.id)}
                   aria-label="Elimina foto"
-                  className="press absolute top-1.5 right-1.5 h-7 w-7 rounded-full glass-strong flex items-center justify-center text-bad"
+                  className="press absolute top-1.5 right-1.5 h-7 w-7 rounded-full glass-prominent flex items-center justify-center text-bad"
                 >
                   <Trash2 size={13} />
                 </button>
               </div>
             ))}
           </div>
+        ) : (
+          <p className="text-[11px] text-faint text-center mt-3 tracking-wider uppercase">
+            Nessuna foto · scatta in luce naturale, stesso angolo
+          </p>
         )}
       </Card>
 
       <SectionTitle>Storico misurazioni</SectionTitle>
       {state.measurements.length === 0 ? (
-        <Card>
-          <p className="text-[13px] text-muted text-center tracking-wide py-3">Nessuna misurazione registrata</p>
-        </Card>
+        <EmptyState
+          icon={Ruler}
+          title="Archivio vuoto"
+          hint="Le misurazioni mensili appariranno qui in ordine inverso."
+        />
       ) : (
-        <div className="glass rounded-glass-lg overflow-x-auto">
+        <div className="glass-regular rounded-glass-lg overflow-x-auto">
           <table className="w-full text-[13px] tabular-nums">
             <thead>
               <tr>
@@ -188,6 +195,8 @@ export default function Misure({ state, setState }) {
           </table>
         </div>
       )}
+
+      <SignatureMark />
     </div>
   )
 }

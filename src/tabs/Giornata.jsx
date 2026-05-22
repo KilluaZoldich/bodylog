@@ -5,6 +5,9 @@ import { getDay, setDay, totalsForDay } from '../lib/storage.js'
 import { MEAL_SLOTS, WORKOUT_TYPES, TARGETS } from '../lib/profile.js'
 import { Card, SectionTitle, NumberInput, TextArea, Stepper, Toggle, PrimaryButton, ProgressBar } from '../components/ui.jsx'
 import { useToast } from '../components/Toast.jsx'
+import Masthead from '../components/Masthead.jsx'
+import SignatureMark from '../components/SignatureMark.jsx'
+import { success as hapticSuccess, tap as hapticTap } from '../lib/haptics.js'
 
 export default function Giornata({ state, setState }) {
   const [dateKey, setDateKey] = useState(todayKey())
@@ -30,16 +33,13 @@ export default function Giornata({ state, setState }) {
 
   function save() {
     setState((prev) => setDay(prev, dateKey, getDay(prev, dateKey)))
+    hapticSuccess()
     show('Giornata salvata', { kind: 'success' })
   }
 
   return (
-    <div className="px-5 pt-5 pb-[200px] max-w-md mx-auto">
-      <header className="mb-6">
-        <div className="label-editorial mb-1">Diario</div>
-        <h1 className="text-2xl font-display font-light text-cream">Giornata</h1>
-        <p className="text-[13px] text-muted mt-1 tracking-wide">{formatItDateLong(dateKey)}</p>
-      </header>
+    <div className="px-5 pt-5 pb-[210px] max-w-md mx-auto">
+      <Masthead section="Giornata" phase={formatItDateLong(dateKey).split(',')[0]} state={state} />
 
       <Card>
         <label className="label-editorial block mb-2">Data</label>
@@ -47,7 +47,7 @@ export default function Giornata({ state, setState }) {
           type="date"
           value={dateKey}
           onChange={(e) => setDateKey(e.target.value)}
-          className="w-full min-h-[48px] rounded-glass-sm glass-inset px-4 text-base text-cream"
+          className="w-full min-h-[48px] rounded-glass-sm glass-clear px-4 text-base text-cream"
         />
       </Card>
 
@@ -65,7 +65,7 @@ export default function Giornata({ state, setState }) {
         <div className="mt-3">
           <Toggle
             checked={!!day.weighed_morning}
-            onChange={(v) => update({ weighed_morning: v })}
+            onChange={(v) => { update({ weighed_morning: v }); hapticTap() }}
             label="Pesato al mattino"
             sublabel="A digiuno, dopo bagno"
           />
@@ -88,7 +88,7 @@ export default function Giornata({ state, setState }) {
       <Card>
         <Toggle
           checked={!!day.workout.done}
-          onChange={(v) => updateWorkout({ done: v })}
+          onChange={(v) => { updateWorkout({ done: v }); hapticTap() }}
           label="Oggi palestra"
           sublabel={day.workout.done ? 'Sessione registrata' : 'Rest day'}
         />
@@ -97,7 +97,7 @@ export default function Giornata({ state, setState }) {
             <select
               value={day.workout.type}
               onChange={(e) => updateWorkout({ type: e.target.value })}
-              className="w-full min-h-[48px] rounded-glass-sm glass-inset px-4 text-base text-cream"
+              className="w-full min-h-[48px] rounded-glass-sm glass-clear px-4 text-base text-cream"
               aria-label="Tipo allenamento"
             >
               <option value="">Tipo sessione…</option>
@@ -142,11 +142,12 @@ export default function Giornata({ state, setState }) {
 
       <div className="mt-6">
         <PrimaryButton onClick={save}>Salva giornata</PrimaryButton>
-        <p className="text-[11px] text-faint tracking-wider text-center mt-3 uppercase">
+        <p className="text-[10px] text-faint tracking-wider text-center mt-3 uppercase">
           Auto-save attivo
         </p>
       </div>
 
+      <SignatureMark />
       <DayFooter totals={totals} />
     </div>
   )
@@ -157,7 +158,7 @@ function MealCard({ slot, meal, onChange }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="glass rounded-glass-lg overflow-hidden">
+    <div className="glass-regular rounded-glass-lg overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -174,7 +175,9 @@ function MealCard({ slot, meal, onChange }) {
             <Check size={14} strokeWidth={3} />
           </span>
           <div className="text-left">
-            <div className="text-[15px] font-medium text-cream tracking-wide">{slot.label}</div>
+            <div className="font-editorial text-[17px] font-medium text-cream tracking-tight">
+              {slot.label}
+            </div>
             {hasContent && (
               <div className="text-[11px] text-muted tabular-nums tracking-wide mt-0.5">
                 {meal.kcal || 0} kcal · {meal.protein_g || 0}g prot
@@ -204,11 +207,11 @@ function MealCard({ slot, meal, onChange }) {
           </div>
           <button
             type="button"
-            onClick={() => onChange({ done: !meal.done })}
+            onClick={() => { onChange({ done: !meal.done }); hapticTap() }}
             className={`press w-full min-h-[44px] rounded-glass-sm text-[13px] font-medium tracking-wide transition-colors ${
               meal.done
                 ? 'bg-good/15 border border-good/40 text-good'
-                : 'glass-inset text-muted'
+                : 'glass-clear text-muted'
             }`}
           >
             {meal.done ? 'Fatto ✓' : 'Segna come fatto'}
@@ -226,9 +229,9 @@ function DayFooter({ totals }) {
   return (
     <div
       className="fixed inset-x-0 z-30 flex justify-center pointer-events-none px-4"
-      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 86px)' }}
+      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 90px)' }}
     >
-      <div className="pointer-events-auto glass-strong rounded-glass-lg px-5 py-4 w-full max-w-md space-y-3">
+      <div className="pointer-events-auto glass-prominent rounded-glass-lg px-5 py-4 w-full max-w-md space-y-3">
         <ProgressBar value={totals.kcal} max={TARGETS.kcal_mid} label="Kcal oggi" suffix="" kind={kcalKind} />
         <ProgressBar value={totals.protein} max={TARGETS.protein_mid} label="Proteine" suffix="g" kind={protKind} />
       </div>
