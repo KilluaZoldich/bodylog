@@ -1,74 +1,83 @@
 # BodyLog
 
-Webapp locale mobile-first per tracciare lean bulk. Gira sul tuo Mac, si apre
-dall'iPhone in LAN, salva tutto in `localStorage`. Zero backend, zero account.
+Webapp mobile-first per tracciare lean bulk. Hostata su **GitHub Pages** (HTTPS,
+gratis), accessibile da qualunque dispositivo. Zero backend, zero account: i
+dati vivono in `localStorage` del browser su cui apri l'app.
+
+🌐 **Live:** https://killuazoldich.github.io/bodylog/
 
 ## Stack
 
 - Vite + React 19 + JavaScript
 - Tailwind CSS v3 (utility classes)
 - Recharts (grafico peso) · lucide-react (icone)
-- Persistenza: `localStorage` browser
+- Persistenza: `localStorage` (per-origine, per-browser)
+- Deploy: GitHub Actions → GitHub Pages
 
-## Avvio
+## Uso quotidiano
+
+Apri `https://killuazoldich.github.io/bodylog/` in Safari sull'iPhone, tap
+"Condividi" → "Aggiungi a Home". L'icona finisce sulla home screen e si apre
+come app a tutto schermo (safe-area + status bar nera traslucida).
+
+**localStorage è per-browser:** se apri l'app in Safari iPhone, i dati restano
+lì. Apri lo stesso URL in Chrome desktop e troverai un'app vuota. Per
+spostare dati: tab **Esporta → backup JSON**, poi **Importa** sull'altro device.
+
+## Sviluppo locale
 
 ```bash
 cd ~/dev/bodylog
-npm run dev:lan
+npm run dev      # localhost:5173
+npm run dev:lan  # esposto in LAN per testare da iPhone via Wi-Fi
 ```
 
-Lo script `dev:lan` lancia Vite con `--host`, esponendolo su tutte le
-interfacce di rete (porta `5173`).
+Per trovare l'IP del Mac in LAN: `ipconfig getifaddr en0`.
 
-## Aprire dall'iPhone
+## Deploy
 
-1. Mac e iPhone sulla **stessa rete Wi-Fi**.
-2. Trova l'IP locale del Mac:
+Ogni push su `main` triggera il workflow `.github/workflows/deploy.yml`:
 
-   ```bash
-   ipconfig getifaddr en0          # Wi-Fi
-   # oppure, se sei via Ethernet:
-   ipconfig getifaddr en1
-   ```
+1. `npm ci`
+2. `npm run build` (Vite genera `dist/` con `base: /bodylog/`)
+3. Upload artefatto → `actions/deploy-pages` → live
 
-3. Sull'iPhone, in Safari, vai a:
-
-   ```
-   http://<IP_DEL_MAC>:5173
-   ```
-
-4. Per averla come icona su home screen: tap → "Condividi" → "Aggiungi a Home".
-   La PWA usa status bar nera traslucida e safe-area su iPhone con notch.
-
-## Comandi del mattino
-
-Tre comandi per essere pronto in 10 secondi:
+Tempo medio: ~30–60 secondi. Vedere stato:
 
 ```bash
-cd ~/dev/bodylog
-npm run dev:lan
-ipconfig getifaddr en0   # leggi l'IP, aprilo in Safari su iPhone
+gh run list --limit 5
+gh run watch        # follow the latest run
+```
+
+Trigger manuale senza push:
+
+```bash
+gh workflow run "Deploy to GitHub Pages"
 ```
 
 ## Backup
 
 - **Tab Esporta → "Esporta tutto (JSON backup)"**: scarica `bodylog-backup-YYYY-MM-DD.json` con _tutti_ i dati (giornate, misure, foto in base64).
-- **Ripristino**: stessa tab, sezione "Ripristino", carica il `.json`. Sovrascrive lo stato locale (chiede conferma).
-- I dati vivono in `localStorage` del browser. Se cancelli i dati del sito da Safari → i dati spariscono. **Fai backup periodici.**
-- Foto progresso: salvate in base64 nel localStorage. Quota Safari ≈ 5–10 MB → l'app ti avvisa se una foto supera 4 MB.
+- **Ripristino**: tab Esporta, sezione "Ripristino", carica il `.json`. Sovrascrive lo stato locale (chiede conferma).
+- Foto progresso in base64 → quota Safari ~5–10 MB. L'app ti avvisa oltre i 4 MB.
+- **Fai backup periodici.** Se cancelli i dati del sito da Safari, tutto sparisce.
 
 ## Esporta per Claude
 
-**Tab Esporta → "Esporta ultima settimana per Claude"** genera un Markdown
-pre-formattato (profilo + 7 giorni + macro medi + richiesta di analisi) e
-lo copia automaticamente negli appunti. Incollalo in una chat con Claude per
-ricevere suggerimenti sulla dieta della settimana successiva.
+Tab **Esporta → "Esporta ultima settimana per Claude"** genera un Markdown
+pre-formattato (profilo + 7 giorni + macro medi + richiesta di analisi) e lo
+copia automaticamente negli appunti. Incollalo in una chat con Claude per
+ricevere ottimizzazioni della dieta settimana per settimana.
+
+> Nota: la clipboard API funziona solo in **contesti sicuri** (HTTPS o
+> `localhost`). Su GitHub Pages è HTTPS quindi tutto ok. Su `http://192.168.x.x`
+> Safari potrebbe bloccarla — in quel caso usa il testo dell'anteprima sotto.
 
 ## Struttura
 
 ```
 src/
-  App.jsx                 # shell + state-based tabs
+  App.jsx                 # shell + state-based tabs (no router)
   main.jsx                # entry
   index.css               # tailwind + base styles
   components/
@@ -76,21 +85,22 @@ src/
     Toast.jsx             # notifiche non-bloccanti
     ui.jsx                # Card, NumberInput, Stepper, Toggle, ProgressBar, …
   tabs/
-    Dashboard.jsx         # peso + chart 30gg + 3 stat
-    Giornata.jsx          # input principale (peso, pasti, allenamento, sonno, note)
-    Misure.jsx            # misure mensili + foto progresso
-    Esporta.jsx           # report markdown + JSON backup/restore
+    Dashboard.jsx
+    Giornata.jsx
+    Misure.jsx
+    Esporta.jsx
   lib/
     profile.js            # dati utente + target (hardcoded)
-    dates.js              # date helpers (YYYY-MM-DD locale)
-    storage.js            # localStorage CRUD + emptyDay
-    aggregate.js          # weekly stats, currentWeight, delta band
-    exporter.js           # buildWeeklyMarkdown + downloadJsonBackup
+    dates.js
+    storage.js
+    aggregate.js
+    exporter.js
+.github/workflows/deploy.yml   # auto-deploy on push to main
 ```
 
-## Note sviluppo
+## Workflow tipico
 
-- iPhone deve ricaricare con cache pulita dopo modifiche grosse: in Safari → "AA" → ricarica senza cache, oppure chiudi/riapri la PWA.
-- HMR funziona anche sull'iPhone via LAN, ma se la connessione cade chiudi e riapri Safari.
-- Se cambi rete o l'IP del Mac cambia, devi rigenerare l'URL con `ipconfig getifaddr en0`.
-- **Niente sync**: lavora su un solo dispositivo alla volta. Per spostare i dati, usa il backup JSON.
+1. Modifica codice in locale (`npm run dev`)
+2. `git add . && git commit -m "..." && git push`
+3. GitHub Actions builda e deploya in ~1 min
+4. Ricarica la PWA sull'iPhone (Safari → AA → ricarica senza cache, o chiudi e riapri)
