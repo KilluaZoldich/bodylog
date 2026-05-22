@@ -4,15 +4,23 @@
 
 html, body, #root {
   height: 100%;
-  background-color: #0a0a0b;
-  color: #F5F3EE;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overscroll-behavior-y: none;
+  color: #F5F3EE;
 }
 
 body {
   margin: 0;
+  /* Warm dark base + two faint gold radial bloom for glass to refract */
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -10%, rgba(201, 169, 97, 0.10), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 100% 110%, rgba(201, 169, 97, 0.06), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 0% 80%, rgba(120, 80, 200, 0.04), transparent 60%),
+    linear-gradient(180deg, #08080a 0%, #0c0a09 50%, #08080a 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 input, textarea, select, button {
@@ -20,7 +28,6 @@ input, textarea, select, button {
   color: inherit;
 }
 
-/* Hide number input spinners on iOS/desktop for cleaner look */
 input[type=number]::-webkit-outer-spin-button,
 input[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -31,4 +38,71 @@ input[type=number] { -moz-appearance: textfield; }
 /* Safe-area helpers */
 .pb-safe { padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem); }
 .pt-safe { padding-top: calc(env(safe-area-inset-top) + 0.5rem); }
-.pb-nav { padding-bottom: calc(env(safe-area-inset-bottom) + 5.5rem); }
+.pb-nav { padding-bottom: calc(env(safe-area-inset-bottom) + 6.5rem); }
+
+/* ─── Liquid Glass primitives ───────────────────────────────────────── */
+
+/* Standard glass surface: blur + faint white tint gradient + inner top highlight */
+.glass {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.025) 100%);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+    0 8px 32px -8px rgba(0, 0, 0, 0.5);
+}
+
+/* Heavier glass for floating elements (nav, sticky footer, toast) */
+.glass-strong {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.03) 100%);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
+    0 20px 60px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* Inset glass for inputs — feels "carved" instead of "floating" */
+.glass-inset {
+  background: rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Editorial label — small caps tracking */
+.label-editorial {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: #9b9aa0;
+}
+
+/* Hairline divider */
+.hairline { background: rgba(255, 255, 255, 0.06); }
+
+/* Active press feedback — subtle */
+.press {
+  transition: transform 120ms ease, filter 120ms ease, background-color 120ms ease;
+}
+.press:active {
+  transform: scale(0.97);
+  filter: brightness(0.92);
+}
+
+/* Date / select native control styling on iOS */
+input[type="date"],
+select {
+  color-scheme: dark;
+}
+
+/* Hide the default datetime icon padding ugliness on iOS */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.6);
+}

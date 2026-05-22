@@ -17,7 +17,7 @@ export default function App() {
 
   return (
     <ToastProvider>
-      <div className="min-h-full bg-bg text-text font-sans pt-safe">
+      <div className="min-h-full text-cream font-sans pt-safe">
         {tab === 'dashboard' && <Dashboard state={state} onGoToGiornata={() => setTab('giornata')} />}
         {tab === 'giornata' && <Giornata state={state} setState={setState} />}
         {tab === 'misure' && <Misure state={state} setState={setState} />}

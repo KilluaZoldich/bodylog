@@ -48,7 +48,7 @@ export default function Misure({ state, setState }) {
     const file = e.target.files?.[0]
     if (!file) return
     if (file.size > MAX_PHOTO_BYTES) {
-      show(`Foto > 4MB (${(file.size / 1024 / 1024).toFixed(1)}MB). LocalStorage potrebbe riempirsi.`, { kind: 'warn', duration: 4000 })
+      show(`Foto > 4MB (${(file.size / 1024 / 1024).toFixed(1)}MB) — quota a rischio`, { kind: 'warn', duration: 4000 })
     }
     const reader = new FileReader()
     reader.onload = () => {
@@ -71,24 +71,25 @@ export default function Misure({ state, setState }) {
   }
 
   return (
-    <div className="px-4 pt-4 pb-28 max-w-md mx-auto">
-      <header className="mb-4">
-        <h1 className="text-2xl font-bold text-text">Misure</h1>
-        <p className="text-sm text-muted mt-0.5">Aggiorna 1x al mese</p>
+    <div className="px-5 pt-5 pb-nav max-w-md mx-auto">
+      <header className="mb-6">
+        <div className="label-editorial mb-1">Tracking</div>
+        <h1 className="text-2xl font-display font-light text-cream">Misure</h1>
+        <p className="text-[13px] text-muted mt-1 tracking-wide">Aggiorna ~1x al mese</p>
       </header>
 
       <Card>
-        <label className="block text-xs uppercase tracking-wider text-muted mb-2">Data</label>
+        <label className="label-editorial block mb-2">Data</label>
         <input
           type="date"
           value={form.date}
           onChange={(e) => setForm({ ...form, date: e.target.value })}
-          className="w-full min-h-[44px] rounded-xl bg-surface2 border border-border px-3 text-base text-text"
+          className="w-full min-h-[48px] rounded-glass-sm glass-inset px-4 text-base text-cream"
         />
-        <div className="mt-3 space-y-3">
+        <div className="mt-4 space-y-3">
           {FIELDS.map((f) => (
             <div key={f.key}>
-              <label className="block text-xs uppercase tracking-wider text-muted mb-1">{f.label}</label>
+              <label className="label-editorial block mb-1.5">{f.label}</label>
               <NumberInput
                 value={form[f.key]}
                 onChange={(v) => setForm({ ...form, [f.key]: v })}
@@ -99,7 +100,7 @@ export default function Misure({ state, setState }) {
             </div>
           ))}
         </div>
-        <div className="mt-4">
+        <div className="mt-5">
           <PrimaryButton onClick={save}>Salva misure</PrimaryButton>
         </div>
       </Card>
@@ -116,24 +117,26 @@ export default function Misure({ state, setState }) {
         />
         <GhostButton onClick={() => fileRef.current?.click()}>
           <span className="inline-flex items-center justify-center gap-2">
-            <Camera size={18} /> Aggiungi foto progresso
+            <Camera size={16} strokeWidth={1.8} /> Aggiungi foto progresso
           </span>
         </GhostButton>
         {state.photos.length > 0 && (
-          <div className="mt-3 grid grid-cols-3 gap-2">
+          <div className="mt-4 grid grid-cols-3 gap-2">
             {state.photos.map((p) => (
-              <div key={p.id} className="relative">
-                <img src={p.dataUrl} alt={`Progresso ${p.dateKey}`} className="w-full aspect-square object-cover rounded-xl border border-border" />
-                <div className="absolute bottom-1 left-1 right-1 text-[10px] text-text bg-bg/70 rounded px-1 py-0.5 text-center">
+              <div key={p.id} className="relative group">
+                <div className="aspect-square overflow-hidden rounded-glass-sm border border-white/10">
+                  <img src={p.dataUrl} alt={`Progresso ${p.dateKey}`} className="w-full h-full object-cover" />
+                </div>
+                <div className="absolute bottom-1.5 left-1.5 right-1.5 text-[10px] text-cream glass-strong rounded-full px-2 py-0.5 text-center tracking-wider">
                   {formatItDate(p.dateKey)}
                 </div>
                 <button
                   type="button"
                   onClick={() => removePhoto(p.id)}
                   aria-label="Elimina foto"
-                  className="absolute top-1 right-1 h-7 w-7 rounded-full bg-bg/80 border border-border flex items-center justify-center text-bad"
+                  className="press absolute top-1.5 right-1.5 h-7 w-7 rounded-full glass-strong flex items-center justify-center text-bad"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={13} />
                 </button>
               </div>
             ))}
@@ -144,39 +147,39 @@ export default function Misure({ state, setState }) {
       <SectionTitle>Storico misurazioni</SectionTitle>
       {state.measurements.length === 0 ? (
         <Card>
-          <p className="text-sm text-muted text-center">Nessuna misurazione ancora.</p>
+          <p className="text-[13px] text-muted text-center tracking-wide py-3">Nessuna misurazione registrata</p>
         </Card>
       ) : (
-        <div className="rounded-2xl bg-surface border border-border overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="glass rounded-glass-lg overflow-x-auto">
+          <table className="w-full text-[13px] tabular-nums">
             <thead>
-              <tr className="text-muted text-[11px] uppercase tracking-wider">
-                <th className="px-3 py-2 text-left">Data</th>
-                <th className="px-2 py-2 text-right">Peso</th>
-                <th className="px-2 py-2 text-right">Petto</th>
-                <th className="px-2 py-2 text-right">Bicipite</th>
-                <th className="px-2 py-2 text-right">Vita</th>
-                <th className="px-2 py-2 text-right">Coscia</th>
-                <th className="px-2 py-2"></th>
+              <tr>
+                <th className="px-4 py-3 text-left label-editorial !text-[9px]">Data</th>
+                <th className="px-2 py-3 text-right label-editorial !text-[9px]">Peso</th>
+                <th className="px-2 py-3 text-right label-editorial !text-[9px]">Petto</th>
+                <th className="px-2 py-3 text-right label-editorial !text-[9px]">Bic</th>
+                <th className="px-2 py-3 text-right label-editorial !text-[9px]">Vita</th>
+                <th className="px-2 py-3 text-right label-editorial !text-[9px]">Cos</th>
+                <th className="px-2 py-3"></th>
               </tr>
             </thead>
             <tbody>
               {state.measurements.map((m) => (
-                <tr key={m.id} className="border-t border-border">
-                  <td className="px-3 py-2 text-text">{formatItDate(m.date)}</td>
-                  <td className="px-2 py-2 text-right text-text">{m.weight_kg ?? '—'}</td>
-                  <td className="px-2 py-2 text-right text-text">{m.chest_cm ?? '—'}</td>
-                  <td className="px-2 py-2 text-right text-text">{m.biceps_cm ?? '—'}</td>
-                  <td className="px-2 py-2 text-right text-text">{m.waist_cm ?? '—'}</td>
-                  <td className="px-2 py-2 text-right text-text">{m.thigh_cm ?? '—'}</td>
-                  <td className="px-2 py-2 text-right">
+                <tr key={m.id} className="border-t border-white/[0.05]">
+                  <td className="px-4 py-3 text-cream font-medium">{formatItDate(m.date)}</td>
+                  <td className="px-2 py-3 text-right text-cream">{m.weight_kg ?? '—'}</td>
+                  <td className="px-2 py-3 text-right text-cream">{m.chest_cm ?? '—'}</td>
+                  <td className="px-2 py-3 text-right text-cream">{m.biceps_cm ?? '—'}</td>
+                  <td className="px-2 py-3 text-right text-cream">{m.waist_cm ?? '—'}</td>
+                  <td className="px-2 py-3 text-right text-cream">{m.thigh_cm ?? '—'}</td>
+                  <td className="px-2 py-3 text-right">
                     <button
                       type="button"
                       onClick={() => removeRow(m.id)}
                       aria-label="Elimina riga"
-                      className="text-muted hover:text-bad"
+                      className="press text-faint hover:text-bad p-1"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={13} />
                     </button>
                   </td>
                 </tr>

@@ -47,66 +47,66 @@ export default function Esporta({ state, setState }) {
   }
 
   return (
-    <div className="px-4 pt-4 pb-28 max-w-md mx-auto">
-      <header className="mb-4">
-        <h1 className="text-2xl font-bold text-text">Esporta</h1>
-        <p className="text-sm text-muted mt-0.5">Condividi i dati con Claude per ottimizzare</p>
+    <div className="px-5 pt-5 pb-nav max-w-md mx-auto">
+      <header className="mb-6">
+        <div className="label-editorial mb-1">Share</div>
+        <h1 className="text-2xl font-display font-light text-cream">Esporta</h1>
+        <p className="text-[13px] text-muted mt-1 tracking-wide">Condividi i dati con Claude per ottimizzare</p>
       </header>
 
       <Card>
-        <div className="flex items-start gap-3">
-          <FileText className="text-accent flex-shrink-0 mt-0.5" size={22} />
+        <div className="flex items-start gap-3 mb-4">
+          <div className="h-10 w-10 rounded-glass-sm glass-inset flex items-center justify-center flex-shrink-0">
+            <FileText className="text-accent" size={18} strokeWidth={1.6} />
+          </div>
           <div>
-            <h2 className="text-base font-semibold text-text">Report settimanale per Claude</h2>
-            <p className="text-sm text-muted mt-1">
-              Genera un Markdown pre-formattato con gli ultimi 7 giorni + profilo + richiesta di analisi.
-              Lo copia automaticamente negli appunti.
+            <h2 className="text-[15px] font-semibold text-cream tracking-wide">Report settimanale</h2>
+            <p className="text-[12px] text-muted mt-1 leading-relaxed">
+              Markdown formattato con profilo + ultimi 7 giorni + macro medi + richiesta di analisi. Copiato automaticamente in clipboard.
             </p>
           </div>
         </div>
-        <div className="mt-4">
-          <PrimaryButton onClick={copyWeekly}>
-            <span className="inline-flex items-center justify-center gap-2">
-              <Copy size={18} /> Esporta ultima settimana per Claude
-            </span>
-          </PrimaryButton>
-        </div>
+        <PrimaryButton onClick={copyWeekly}>
+          <span className="inline-flex items-center justify-center gap-2">
+            <Copy size={16} strokeWidth={2} /> Esporta per Claude
+          </span>
+        </PrimaryButton>
       </Card>
 
       <div className="mt-3">
         <Card>
-          <div className="flex items-start gap-3">
-            <Download className="text-accent flex-shrink-0 mt-0.5" size={22} />
+          <div className="flex items-start gap-3 mb-4">
+            <div className="h-10 w-10 rounded-glass-sm glass-inset flex items-center justify-center flex-shrink-0">
+              <Download className="text-accent" size={18} strokeWidth={1.6} />
+            </div>
             <div>
-              <h2 className="text-base font-semibold text-text">Backup JSON completo</h2>
-              <p className="text-sm text-muted mt-1">
-                Scarica tutto lo stato dell'app (giornate, misure, foto in base64) come file <code className="text-accent">.json</code>.
+              <h2 className="text-[15px] font-semibold text-cream tracking-wide">Backup JSON</h2>
+              <p className="text-[12px] text-muted mt-1 leading-relaxed">
+                Scarica tutto lo stato (giornate, misure, foto base64) come <code className="text-accent font-mono text-[11px]">.json</code>.
               </p>
             </div>
           </div>
-          <div className="mt-4">
-            <GhostButton onClick={downloadAll}>
-              <span className="inline-flex items-center justify-center gap-2">
-                <Download size={18} /> Esporta tutto (JSON backup)
-              </span>
-            </GhostButton>
-          </div>
+          <GhostButton onClick={downloadAll}>
+            <span className="inline-flex items-center justify-center gap-2">
+              <Download size={16} strokeWidth={1.8} /> Scarica backup
+            </span>
+          </GhostButton>
         </Card>
       </div>
 
       <SectionTitle>Ripristino</SectionTitle>
       <Card>
-        <div className="flex items-start gap-2 mb-3">
-          <AlertTriangle className="text-warn flex-shrink-0 mt-0.5" size={18} />
-          <p className="text-xs text-muted">
-            Importare un backup <strong>sovrascrive</strong> tutti i dati locali. Verrà chiesta conferma.
+        <div className="flex items-start gap-2.5 mb-4">
+          <AlertTriangle className="text-warn flex-shrink-0 mt-0.5" size={14} strokeWidth={2} />
+          <p className="text-[11px] text-muted leading-relaxed tracking-wide">
+            Importare un backup <span className="text-cream font-semibold">sovrascrive</span> tutti i dati locali. Verrà chiesta conferma.
           </p>
         </div>
         <label className="block">
           <input type="file" accept="application/json" onChange={importBackup} className="hidden" />
-          <span className="block w-full min-h-[48px] rounded-2xl bg-surface2 border border-border text-text font-medium text-center leading-[48px] cursor-pointer">
+          <span className="press block w-full min-h-[52px] rounded-glass glass text-cream font-medium text-[15px] tracking-wide text-center leading-[52px] cursor-pointer">
             <span className="inline-flex items-center justify-center gap-2">
-              <Upload size={18} /> Importa backup JSON
+              <Upload size={16} strokeWidth={1.8} /> Importa JSON
             </span>
           </span>
         </label>
@@ -114,9 +114,9 @@ export default function Esporta({ state, setState }) {
 
       {preview && (
         <>
-          <SectionTitle>Anteprima report</SectionTitle>
-          <Card>
-            <pre className="whitespace-pre-wrap break-words text-[11px] text-muted leading-relaxed max-h-96 overflow-auto">
+          <SectionTitle>Anteprima</SectionTitle>
+          <Card className="!p-4">
+            <pre className="whitespace-pre-wrap break-words text-[11px] text-muted leading-relaxed max-h-96 overflow-auto font-mono">
               {preview}
             </pre>
           </Card>

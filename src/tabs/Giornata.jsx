@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ChevronDown, ChevronRight, Check } from 'lucide-react'
+import { ChevronDown, Check } from 'lucide-react'
 import { todayKey, formatItDateLong } from '../lib/dates.js'
 import { getDay, setDay, totalsForDay } from '../lib/storage.js'
 import { MEAL_SLOTS, WORKOUT_TYPES, TARGETS } from '../lib/profile.js'
@@ -18,10 +18,7 @@ export default function Giornata({ state, setState }) {
   function updateMeal(slot, patch) {
     const current = getDay(state, dateKey)
     update({
-      meals: {
-        ...current.meals,
-        [slot]: { ...current.meals[slot], ...patch },
-      },
+      meals: { ...current.meals, [slot]: { ...current.meals[slot], ...patch } },
     })
   }
 
@@ -32,25 +29,25 @@ export default function Giornata({ state, setState }) {
   const totals = totalsForDay(day)
 
   function save() {
-    // setDay already runs on every change; this is just for UX feedback.
     setState((prev) => setDay(prev, dateKey, getDay(prev, dateKey)))
     show('Giornata salvata', { kind: 'success' })
   }
 
   return (
-    <div className="px-4 pt-4 pb-44 max-w-md mx-auto">
-      <header className="mb-4">
-        <h1 className="text-2xl font-bold text-text">Giornata</h1>
-        <p className="text-sm text-muted mt-0.5">{formatItDateLong(dateKey)}</p>
+    <div className="px-5 pt-5 pb-[200px] max-w-md mx-auto">
+      <header className="mb-6">
+        <div className="label-editorial mb-1">Diario</div>
+        <h1 className="text-2xl font-display font-light text-cream">Giornata</h1>
+        <p className="text-[13px] text-muted mt-1 tracking-wide">{formatItDateLong(dateKey)}</p>
       </header>
 
       <Card>
-        <label className="block text-xs uppercase tracking-wider text-muted mb-2">Data</label>
+        <label className="label-editorial block mb-2">Data</label>
         <input
           type="date"
           value={dateKey}
           onChange={(e) => setDateKey(e.target.value)}
-          className="w-full min-h-[44px] rounded-xl bg-surface2 border border-border px-3 text-base text-text"
+          className="w-full min-h-[48px] rounded-glass-sm glass-inset px-4 text-base text-cream"
         />
       </Card>
 
@@ -100,7 +97,7 @@ export default function Giornata({ state, setState }) {
             <select
               value={day.workout.type}
               onChange={(e) => updateWorkout({ type: e.target.value })}
-              className="w-full min-h-[44px] rounded-xl bg-surface2 border border-border px-3 text-base text-text"
+              className="w-full min-h-[48px] rounded-glass-sm glass-inset px-4 text-base text-cream"
               aria-label="Tipo allenamento"
             >
               <option value="">Tipo sessione…</option>
@@ -145,7 +142,9 @@ export default function Giornata({ state, setState }) {
 
       <div className="mt-6">
         <PrimaryButton onClick={save}>Salva giornata</PrimaryButton>
-        <p className="text-xs text-muted text-center mt-2">I dati vengono salvati automaticamente a ogni modifica.</p>
+        <p className="text-[11px] text-faint tracking-wider text-center mt-3 uppercase">
+          Auto-save attivo
+        </p>
       </div>
 
       <DayFooter totals={totals} />
@@ -158,32 +157,39 @@ function MealCard({ slot, meal, onChange }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="rounded-2xl bg-surface border border-border overflow-hidden">
+    <div className="glass rounded-glass-lg overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 min-h-[56px]"
+        className="press w-full flex items-center justify-between px-5 py-4 min-h-[64px]"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <span
-            className={`inline-flex h-6 w-6 items-center justify-center rounded-full border-2 ${
-              meal.done ? 'bg-good border-good text-bg' : 'border-border text-transparent'
+            className={`inline-flex h-7 w-7 items-center justify-center rounded-full border transition-all ${
+              meal.done
+                ? 'bg-good/20 border-good text-good'
+                : 'border-white/15 text-transparent'
             }`}
           >
-            <Check size={14} />
+            <Check size={14} strokeWidth={3} />
           </span>
-          <span className="text-base font-medium text-text">{slot.label}</span>
-          {hasContent && !open && (
-            <span className="text-xs text-muted">
-              {meal.kcal || 0} kcal · {meal.protein_g || 0}g
-            </span>
-          )}
+          <div className="text-left">
+            <div className="text-[15px] font-medium text-cream tracking-wide">{slot.label}</div>
+            {hasContent && (
+              <div className="text-[11px] text-muted tabular-nums tracking-wide mt-0.5">
+                {meal.kcal || 0} kcal · {meal.protein_g || 0}g prot
+              </div>
+            )}
+          </div>
         </div>
-        {open ? <ChevronDown size={20} className="text-muted" /> : <ChevronRight size={20} className="text-muted" />}
+        <ChevronDown
+          size={18}
+          className={`text-muted transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
+        />
       </button>
 
       {open && (
-        <div className="px-4 pb-4 space-y-2 border-t border-border pt-3">
+        <div className="px-5 pb-5 space-y-3 border-t border-white/[0.06] pt-4">
           <TextArea
             value={meal.text}
             onChange={(v) => onChange({ text: v })}
@@ -199,10 +205,10 @@ function MealCard({ slot, meal, onChange }) {
           <button
             type="button"
             onClick={() => onChange({ done: !meal.done })}
-            className={`w-full min-h-[44px] rounded-xl border text-sm font-medium ${
+            className={`press w-full min-h-[44px] rounded-glass-sm text-[13px] font-medium tracking-wide transition-colors ${
               meal.done
-                ? 'bg-good/15 border-good/40 text-good'
-                : 'bg-surface2 border-border text-muted'
+                ? 'bg-good/15 border border-good/40 text-good'
+                : 'glass-inset text-muted'
             }`}
           >
             {meal.done ? 'Fatto ✓' : 'Segna come fatto'}
@@ -219,10 +225,10 @@ function DayFooter({ totals }) {
 
   return (
     <div
-      className="fixed inset-x-0 z-30 bg-bg/95 backdrop-blur-md border-t border-border"
-      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 64px)' }}
+      className="fixed inset-x-0 z-30 flex justify-center pointer-events-none px-4"
+      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 86px)' }}
     >
-      <div className="max-w-md mx-auto px-4 py-3 space-y-2">
+      <div className="pointer-events-auto glass-strong rounded-glass-lg px-5 py-4 w-full max-w-md space-y-3">
         <ProgressBar value={totals.kcal} max={TARGETS.kcal_mid} label="Kcal oggi" suffix="" kind={kcalKind} />
         <ProgressBar value={totals.protein} max={TARGETS.protein_mid} label="Proteine" suffix="g" kind={protKind} />
       </div>
